@@ -11,5 +11,5 @@ export const LAYER_BUTTONS = LAYER_LIST.map((layout, index) => ({
 }))
 
 export const LAYOUT_CONFIG: Record<TLayoutName, number[]> = {
-  KEEBEE_1: [12, 12, 12, 12],
+  KEERBE_SPLIT_1: [12, 12, 12, 12],
 }

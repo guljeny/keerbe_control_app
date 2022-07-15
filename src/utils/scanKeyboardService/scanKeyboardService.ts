@@ -1,4 +1,5 @@
-import runProcess from 'utils/runProcess'
+// import runProcess from 'utils/runProcess'
+import worker from 'utils/worker'
 
 class ScanKeyboardService {
   /* eslint-disable no-underscore-dangle */
@@ -12,11 +13,10 @@ class ScanKeyboardService {
     if (cb) this.__callback = cb
     if (!this.__callback) return
     if (this.__timer) this.stop()
-    this.__timer = setTimeout(() => {
-      runProcess('scan', [], (data: string) => {
-        this.__callback && this.__callback(data)
-        this.run()
-      })
+    this.__timer = setTimeout(async () => {
+      const jsonData = await worker(['bin/scan'])
+      this.__callback && this.__callback(jsonData)
+      this.run()
     }, 1000)
   }
 

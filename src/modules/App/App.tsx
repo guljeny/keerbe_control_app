@@ -1,7 +1,8 @@
 import React, { memo, useMemo, useEffect, useState } from 'react'
 import LayoutBuilder from 'modules/LayoutBuilder'
 import KeyboardScanScreen from 'components/KeyboardScanScreen'
-import runProcess from 'utils/runProcess'
+// import runProcess from 'utils/runProcess'
+import worker from 'utils/worker'
 import { KeyboardContext } from 'constants/context'
 import scanKeyboardService from 'utils/scanKeyboardService'
 import { LAYOUT_CONFIG } from 'constants/layout'
@@ -12,6 +13,7 @@ function App () {
   const [serial, setSerial] = useState<string | null>(null)
   const [type, setType] = useState<TLayoutName | null>(null)
   const [initialLayout, setInititalLayout] = useState<TLayout | null>(null)
+
   useEffect(() => {
     scanKeyboardService.run(v => {
       try {
@@ -27,11 +29,14 @@ function App () {
 
   useEffect(() => {
     if (type && serial && !initialLayout) {
-      runProcess('get_layout', [serial], (jsonLayout: string) => {
+      console.log(type, serial, initialLayout)
+      ;(async () => {
+        const jsonLayout = await worker([`bin/get_layout ${serial}`])
+        console.log('layout_data:', jsonLayout)
         try {
           setInititalLayout(jsonToLayout(jsonLayout))
         } catch (e) {}
-      })
+      })()
     }
   }, [serial, initialLayout, setInititalLayout, type])
 

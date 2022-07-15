@@ -1,0 +1,3 @@
+[submodule "keerbe_firmware"]
+	path = keerbe_firmware
+	url = git@github.com:guljeny/keerbe_firmware.git

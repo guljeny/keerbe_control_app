@@ -11,7 +11,8 @@ import { KeyboardContext, LayoutContext } from 'constants/context'
 import scanKeyboardService from 'utils/scanKeyboardService'
 import useUploadStateCommand from 'hooks/useUploadStateCommand'
 import typeCasting from 'utils/typeCasting'
-import defaultLayout from '../../../../firmware/layout.json'
+import worker from 'utils/worker'
+// import defaultLayout from '../../../../firmware/layout.json'
 
 import styles from './LayoutBuilder.m.scss'
 
@@ -31,14 +32,14 @@ function LayoutBuilder () {
   }, [setLayout, type])
 
   const setDefaultLayout = useCallback(() => {
-    setLayout(jsonToLayout(typeCasting<{layout: TLayout}>(defaultLayout)))
+    // setLayout(jsonToLayout(typeCasting<{layout: TLayout}>(defaultLayout)))
   }, [setLayout])
 
-  const exportLayout = useCallback(() => {
+  const exportLayout = useCallback(async () => {
     if (!serial || !layout) return
     scanKeyboardService.stop()
     const jsonLayout = layoutToJson(layout)
-    runProcess('upload_layout', [serial, jsonLayout], setUploadState)
+    await worker([`bin/upload_layout ${serial} ${jsonLayout}`])
   }, [serial, layout, setUploadState])
 
   const reset = useCallback(() => {
